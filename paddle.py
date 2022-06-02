@@ -3,10 +3,8 @@ from constants import *
 import pygame
 from enum import Enum
 
+from sides import PaddleSide
 
-class PaddleSide(Enum):
-    Left = 1
-    Right = -1
 
 
 class Paddle():

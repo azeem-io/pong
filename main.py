@@ -1,14 +1,22 @@
-from cgitb import text
-import sys
+
+
 import pygame
+
+from score import ScoreManager
+
+pygame.init() 
+
+import sys
+
 from ball import Ball
 from constants import *
 from paddle import Paddle, PaddleSide
+from utils import center_dashed_line
 
 
 FPS = 60
 
-pygame.init()
+
 screen_surface = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption("Ping Pong")
 
@@ -16,16 +24,7 @@ pygame.key.set_repeat(1, 10)
 
 clock = pygame.time.Clock()
 
-score_p1 = 0
-score_p2 = 0
-
-font = pygame.font.SysFont('Ariel', 64)
-
-def show_score():
-    text_surface = font.render(f"{score_p1}  -  {score_p2}", True, WHITE)
-    text_rect = text_surface.get_rect(center=(SCREEN_WIDTH/2 , 35))
-    screen_surface.blit(text_surface, text_rect)
-
+score_font = pygame.font.SysFont('Ariel', 64)
 
 
 paddle_1 = Paddle(PaddleSide.Left )
@@ -34,8 +33,10 @@ ball = Ball(8)
 # GAME LOOP
 running = True
 while running:
+    
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        key = pygame.key.get_pressed()
+        if event.type == pygame.QUIT or key[pygame.K_ESCAPE]:
             running = False
             pygame.quit()
             sys.exit()
@@ -71,15 +72,19 @@ while running:
         #         print("KEY STROKE UNPRESSED")
     delta_time = clock.tick(FPS) / 1000
     
+
+
     paddle_1.move(delta_time)
     paddle_2.move(delta_time)
     ball.move(delta_time)
 
     screen_surface.fill(BLACK)
-    show_score()
+    ScoreManager.show_score(screen_surface, score_font)
     paddle_1.draw(screen_surface)
     paddle_2.draw(screen_surface)
     ball.draw(screen_surface)
+
+    center_dashed_line(screen_surface)
 
     paddle_1.check_collision(ball)
     paddle_2.check_collision(ball)
